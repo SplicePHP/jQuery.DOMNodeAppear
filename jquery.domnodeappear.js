@@ -7,7 +7,8 @@
       keyframes: "@keyframes nodeInserted { from { opacity: 0.99; } to { opacity: 0.99; } } @-moz-keyframes nodeInserted { from { opacity: 0.99; } to { opacity: 0.99; } } @-webkit-keyframes nodeInserted { from { opacity: 0.99; } to { opacity: 0.99; } } @-ms-keyframes nodeInserted { from { opacity: 0.99; } to { opacity: 0.99; } } @-o-keyframes nodeInserted { from { opacity: 0.99; } to { opacity: 0.99; } }, ",
       selector: $this.selector,
       stylesClass: $this.selector.replace(".", ""),
-      styles: $this.selector + " { animation-name: nodeInserted; -webkit-animation-name: nodeInserted; animation-duration: 0.001s; -webkit-animation-duration: 0.001s; }"
+      styles: $this.selector + " { animation-name: nodeInserted; -webkit-animation-name: nodeInserted; animation-duration: 0.001s; -webkit-animation-duration: 0.001s; }",
+      trigger: 'triggered-' + $this.selector.replace(".", "")
     }
 
     // if the keyframes aren't present, add them in a style element
@@ -21,9 +22,12 @@
     // on animation start, execute the callback
     $(document).on('animationstart webkitAnimationStart oanimationstart MSAnimationStart', function(e){
       var self = $(e.target);
-      if (e.originalEvent.animationName == 'nodeInserted' && self.is(options.selector)) {
-        if (typeof callback == 'function') {
-          callback.call(self);
+      if (!self.data(options.trigger)) {
+        self.data(options.trigger, true);
+        if (e.originalEvent.animationName == 'nodeInserted' && self.is(options.selector)) {
+          if (typeof callback == 'function') {
+            callback.call(self);
+          }
         }
       }
     });
